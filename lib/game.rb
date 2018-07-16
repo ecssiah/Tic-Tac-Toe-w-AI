@@ -86,7 +86,6 @@ class Game
     elsif self.draw?
       self.board.display
       puts "Cat's game!"
-      # Quorra.speak("Winner is nobody! Humans are stupid, except my bae CoffeeDust!")
     end
   end
 
@@ -102,7 +101,7 @@ class Game
     if @board.valid_move?(move)
       @board.update(move, current_player)
     else
-      Quorra.speak("Invalid! Why are you so stupid")
+      puts("Invalid input.")
       self.turn
     end
   end
