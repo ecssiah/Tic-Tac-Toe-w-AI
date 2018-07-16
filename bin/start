@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/environment.rb"
+
+if ENV["APP_ENV"] == "DEFAULT"
+  Game.new.start
+else
+  start_CLI
+end
