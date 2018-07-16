@@ -5,7 +5,7 @@ Bundler.require(:default)
 
 require_all "lib"
 
-Quorra.setup_error_notifier(self)
+# Quorra.setup_error_notifier(self)
 
 puts '
   ██████╗ ██████╗ ███████╗███████╗███████╗███████╗
