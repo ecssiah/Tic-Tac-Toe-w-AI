@@ -28,7 +28,6 @@ class MoveInfo
     wins.flatten.empty? ? nil : wins.flatten!
   end
 
-
   def calc_curr_threat
     threats = []
 
@@ -42,7 +41,6 @@ class MoveInfo
 
     threats.flatten.empty? ? nil : threats.flatten!
   end
-
 
   def calc_possible_threats
     threats = []
@@ -102,7 +100,6 @@ class AI
     @token = token
   end
 
-
   def calculate_move
     @info = MoveInfo.new(@game, @token)
 
@@ -111,7 +108,6 @@ class AI
     move += 1
     move.to_s
   end
-
 
   def decision_order
     if (m = decide_first_move)
@@ -125,7 +121,6 @@ class AI
     end
   end
 
-
   # Chooses the cells that are threats if available.
   def prioritize_threats(combo, possible_moves)
     if @info.threats
@@ -134,7 +129,6 @@ class AI
       possible_moves << combo.select { |i| @game.board.cells[i]==" "}
     end
   end 
-
 
   def find_best_move
     best_move = []
@@ -169,7 +163,6 @@ class AI
     best_move.count > 1 ? best_move[rand(0...best_move.count - 1)] : best_move[0]
   end
 
-
   def decide_first_move
     if first_move_on_board?
       moves = ["0", "0", "0", "2", "4", "4"]
@@ -179,10 +172,10 @@ class AI
     end
   end
 
-
   def first_move_on_board?
     @game.board.cells.all? { |cell| cell == " " }
   end
+
 end#endof class
 
 end#endof CD_AI
