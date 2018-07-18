@@ -58,8 +58,8 @@ class AI
   def minimax(cells)
     return score(cells) if over?(cells)
 
-    scores = []
     moves = []
+    scores = []
 
     available_moves(cells).each do |move|
       new_cells = generate_state(move, cells)
@@ -68,14 +68,13 @@ class AI
     end
 
     if current_token(cells) == @token
-      max_score_index = scores.each.with_index.max[1]
-      @input = moves[max_score_index] + 1
-      scores[max_score_index]
+      index = scores.each.with_index.max[1]
     else
-      min_score_index = scores.each.with_index.min[1]
-      @input = moves[min_score_index] + 1
-      scores[min_score_index]
+      index = scores.each.with_index.min[1]
     end
+
+    @input = moves[index] + 1
+    scores[index]
   end
 
   def calculate_move
