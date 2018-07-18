@@ -1,12 +1,6 @@
 module MM_AI
 
 class AI
-  WIN_COMBINATIONS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ]
-
   def initialize(game, token)
     @game = game
     @token = token
@@ -29,7 +23,7 @@ class AI
   end
 
   def current_token(cells)
-    turn_count(cells) % 2 == 0 ? "X" : "O"
+    turn_count(cells).even? ? @game.player_1.token : @game.player_2.token 
   end
 
   def full?(cells)
@@ -37,7 +31,7 @@ class AI
   end
 
   def won?(cells)
-    WIN_COMBINATIONS.find do |combo|
+    Game::WIN_COMBINATIONS.find do |combo|
       streak = cells[combo[0]] + cells[combo[1]] + cells[combo[2]]
       streak == "XXX" || streak == "OOO"
     end
@@ -49,7 +43,7 @@ class AI
   end
 
   def turn_count(cells)
-    cells.count {|cell| cell != " "}
+    cells.count { |cell| cell != " " }
   end
 
   def generate_state(move, cells)
@@ -93,7 +87,7 @@ class AI
 
   def calculate_move
     if turn_count(@game.board.cells) == 0
-      5
+      1 + rand(9)
     else 
       minimax(@game.board.cells)
       @input

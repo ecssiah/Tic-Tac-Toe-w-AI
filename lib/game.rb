@@ -80,23 +80,31 @@ class Game
       puts "I just played 100 games and won #{times_tied - 100}. A strange game.\nThe only winning move is not to play."
       return
     when "aiwars"
-      @player_1 = Players::Computer.new(self, "X", "mm")
-      @player_2 = Players::Computer.new(self, "O", "cd")
-
-      cd_score = 0
-      mm_score = 0
+      scores = [0, 0]
 
       100.times do 
+        if rand(2).even?
+          @player_1 = Players::Computer.new(self, "X", "cd")
+          @player_2 = Players::Computer.new(self, "O", "mm")
+        else
+          @player_1 = Players::Computer.new(self, "O", "cd")
+          @player_2 = Players::Computer.new(self, "X", "mm")
+        end
+
         board.reset!
         play
 
-        winner == "X" ? cd_score + 1 : mm_score + 1
+        if winner == @player_1.token
+          scores[0] += 1
+        elsif winner == @player_2.token
+          scores[1] += 1
+        end
       end
 
       puts
       puts "  Coffee-Dust           Minimax   "
       puts " =============       ============= "
-      puts " |     #{cd_score}     |  to   |     #{mm_score}     | "
+      puts " |     #{scores[0]}     |  to   |     #{scores[1]}     | "
       puts " =============       ============= "
       puts
 
@@ -108,12 +116,11 @@ class Game
 
   def play
     turn while !over?
+    board.display
 
     if won?
-      board.display
       puts "Winner is #{winner}!"
     elsif draw?
-      board.display
       puts "Cat's game!"
     end
   end
@@ -125,12 +132,15 @@ class Game
 
   def turn
     @board.display
-    puts "Please enter 1-9:"
+
+    print "Please enter 1-9: "
     move = current_player.move
+
     if @board.valid_move?(move)
+      puts move
       @board.update(move, current_player)
     else
-      puts("Invalid input.")
+      puts("#{move} is an invalid position.")
       turn
     end
   end
@@ -139,9 +149,9 @@ class Game
     won = won?
     return nil if won == false
 
-    if won.all? {|cell| @board.cells[cell] == "X" }
+    if won.all? { |cell| @board.cells[cell] == "X" }
       "X"
-    elsif won.all? {|cell| @board.cells[cell] == "O" }
+    elsif won.all? { |cell| @board.cells[cell] == "O" }
       "O"
     end
   end
@@ -154,9 +164,11 @@ class Game
         @board.cells[cell_group[2]]
       ]
 
-      if board_pos.all? { |cell| cell == "X" } || board_pos.all? { |cell| cell == "O" }
-        return cell_group
-      end
+      winning_group = 
+        board_pos.all? { |cell| cell == "X" } ||
+        board_pos.all? { |cell| cell == "O" }
+
+      return cell_group if winning_group
     end
 
     false
@@ -204,6 +216,5 @@ def greeting
      ┌─┐┬ ┬ ┬┌─┐┬─┐┌─┐
 ───  ├─┤│ │││├─┤├┬┘└─┐
      ┴ ┴┴ └┴┘┴ ┴┴└─└─┘
-
   '
 end

@@ -7,49 +7,55 @@ class MoveInfo
     @game = game
     @token = token
 
-    self.set_tokens
+    set_tokens
 
-    @win = self.calc_win
-    @curr_threat = self.calc_curr_threat
-    @threats = self.calc_possible_threats
+    @win = calc_win
+    @curr_threat = calc_curr_threat
+    @threats = calc_possible_threats
   end
 
   def calc_win
     wins = []
+
     Game::WIN_COMBINATIONS.each do |combo|
-      my_loc_in_combo = my_locations.select {|i| combo.include?(i)}
+      my_loc_in_combo = my_locations.select { |i| combo.include?(i) }
 
       if my_loc_in_combo.count >= 2
-        wins << combo.select{|i| @game.board.cells[i] == " "}
+        wins << combo.select{ |i| @game.board.cells[i] == " " }
       end
     end
+
     wins.flatten.empty? ? nil : wins.flatten!
   end
 
 
   def calc_curr_threat
     threats = []
+
     Game::WIN_COMBINATIONS.each do |combo|
-      enemy_loc_in_combo = enemy_locations.select {|i| combo.include?(i)}
+      enemy_loc_in_combo = enemy_locations.select { |i| combo.include?(i) }
 
       if enemy_loc_in_combo.count >= 2
-        threats << combo.select{|i| @game.board.cells[i] == " "}
+        threats << combo.select { |i| @game.board.cells[i] == " " }
       end
     end
+
     threats.flatten.empty? ? nil : threats.flatten!
   end
 
 
   def calc_possible_threats
     threats = []
+
     Game::WIN_COMBINATIONS.each do |combo|
-      enemy_loc_in_combo = enemy_locations.select {|i| combo.include?(i)}
-
-      if enemy_loc_in_combo.count >= 1 && combo.all?{|i| my_locations_in_board[i] == nil}
-        threats << combo.select{|i| @game.board.cells[i] == " "}
+      locs_in_combo_nil = combo.all? { |i| my_locations_in_board[i] == nil }
+      enemy_loc_in_combo = enemy_locations.select { |i| combo.include?(i) }
+       
+      if locs_in_combo_nil && enemy_loc_in_combo.count >= 1
+        threats << combo.select { |i| @game.board.cells[i] == " " }
       end
-
     end
+
     threats.flatten.empty? ? nil : threats.flatten!
   end
 
@@ -62,22 +68,31 @@ class MoveInfo
   end
 
   def enemy_locations
-    @game.board.cells.collect.with_index{|cell, i| i if cell == @enemy}.select {|i| i != nil}
+    enemy_cells = @game.board.cells.collect.with_index do |cell, i| 
+      i if cell == @enemy 
+    end
+
+    enemy_cells.select { |i| i != nil }
   end
 
   def my_locations
-    @game.board.cells.collect.with_index{|cell, i| i if cell == self.token}.select {|i| i != nil}
+    my_cells = @game.board.cells.collect.with_index do |cell, i| 
+      i if cell == self.token 
+    end
+
+    my_cells.select { |i| i != nil }
   end
 
   def enemy_locations_in_board
-    @game.board.cells.collect.with_index{|cell, i| i if cell == @enemy}
+    @game.board.cells.collect.with_index { |cell, i| i if cell == @enemy }
   end
 
   def my_locations_in_board
-    @game.board.cells.collect.with_index{|cell, i| i if cell == self.token}
+    @game.board.cells.collect.with_index { |cell, i| i if cell == self.token }
   end
 
 end#endof class
+
 
 class AI
   attr_reader :move_status, :move
@@ -90,27 +105,27 @@ class AI
   def calculate_move
     @info = MoveInfo.new(@game, @token)
 
-    @move = self.decision_order
+    @move = decision_order
     @move.is_a?(Array) ? move = @move[0].to_i : move = @move.to_i
     move += 1
     move.to_s
   end
 
   def decision_order
-    if m=self.decide_first_move
+    if (m = decide_first_move)
       m
     elsif @info.win
       @info.win
     elsif @info.curr_threat
       @info.curr_threat
     else
-      self.find_best_move
+      find_best_move
     end
   end
 
   def find_best_move
-    possible_moves = []
     best_move = []
+    possible_moves = []
 
     Game::WIN_COMBINATIONS.each do |combo|
       row_contents = combo.collect {|i| @game.board.cells[i] }
