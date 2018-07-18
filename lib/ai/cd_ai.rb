@@ -14,13 +14,21 @@ class MoveInfo
     @threats = calc_possible_threats
   end
 
+  def set_tokens
+    if @token == "X"
+      @enemy = "O"
+    elsif @token == "O"
+      @enemy = "X"
+    end
+  end
+
   def calc_win
     wins = []
 
     Game::WIN_COMBINATIONS.each do |combo|
-      my_loc_in_combo = my_locations.select { |i| combo.include?(i) }
+      my_presence = my_locations.select { |i| combo.include?(i) }
 
-      if my_loc_in_combo.count >= 2
+      if my_presence.count >= 2
         wins << combo.select{ |i| @game.board.cells[i] == " " }
       end
     end
@@ -32,9 +40,9 @@ class MoveInfo
     threats = []
 
     Game::WIN_COMBINATIONS.each do |combo|
-      enemy_loc_in_combo = enemy_locations.select { |i| combo.include?(i) }
+      enemy_presence = enemy_locations.select { |i| combo.include?(i) }
 
-      if enemy_loc_in_combo.count >= 2
+      if enemy_presence.count >= 2
         threats << combo.select { |i| @game.board.cells[i] == " " }
       end
     end
@@ -46,10 +54,10 @@ class MoveInfo
     threats = []
 
     Game::WIN_COMBINATIONS.each do |combo|
-      locs_in_combo_nil = combo.all? { |i| my_locations_in_board[i] == nil }
-      enemy_loc_in_combo = enemy_locations.select { |i| combo.include?(i) }
+      no_presence = combo.all? { |i| @game.board.cells[i] != @token }
+      enemy_presence = enemy_locations.select { |i| combo.include?(i) }
        
-      if locs_in_combo_nil && enemy_loc_in_combo.count >= 1
+      if no_presence && enemy_presence.count >= 1
         threats << combo.select { |i| @game.board.cells[i] == " " }
       end
     end
@@ -57,20 +65,12 @@ class MoveInfo
     threats.flatten.empty? ? nil : threats.flatten!
   end
 
-  def set_tokens
-    if @token == "X"
-      @enemy = "O"
-    elsif @token == "O"
-      @enemy = "X"
-    end
-  end
-
   def enemy_locations
     enemy_cells = @game.board.cells.collect.with_index do |cell, i| 
       i if cell == @enemy 
     end
 
-    enemy_cells.select { |i| i != nil }
+    enemy_cells.compact
   end
 
   def my_locations
@@ -78,15 +78,7 @@ class MoveInfo
       i if cell == self.token 
     end
 
-    my_cells.select { |i| i != nil }
-  end
-
-  def enemy_locations_in_board
-    @game.board.cells.collect.with_index { |cell, i| i if cell == @enemy }
-  end
-
-  def my_locations_in_board
-    @game.board.cells.collect.with_index { |cell, i| i if cell == self.token }
+    my_cells.compact
   end
 
 end#endof class
