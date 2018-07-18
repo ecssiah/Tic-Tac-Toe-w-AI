@@ -157,10 +157,9 @@ class AI
 
   def decide_first_move
     if first_move_on_board?
-      moves = ["0", "0", "0", "2", "4", "4"]
-      return moves[rand(0...moves.count - 1)]
+      ["0", "0", "0", "2", "4", "4"].sample
     elsif @info.enemy_locations.count == 1 && @info.my_locations.count == 0
-      return "4" if [0,2,6,8].any? { |i| @info.enemy_locations.include?(i) }
+      "4" if [0,2,6,8].any? { |i| @info.enemy_locations.include?(i) }
     end
   end
 
