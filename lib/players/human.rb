@@ -1,10 +1,10 @@
 module Players
-  class Human < Player
-    #Puny human
-    def move(game)
-      input = gets.strip
-    end
 
+class Human < Player
+  #Puny human
+  def move
+    input = gets.strip
   end
+end
 
 end#endof module
