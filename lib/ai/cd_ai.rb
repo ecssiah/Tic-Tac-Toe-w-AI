@@ -102,8 +102,8 @@ class AI
   end
 
   def decision_order
-    if (m = decide_first_move)
-      m
+    if (first_move = decide_first_move)
+      first_move
     elsif @info.win
       @info.win
     elsif @info.curr_threat
