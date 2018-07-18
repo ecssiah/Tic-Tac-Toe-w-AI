@@ -7,15 +7,8 @@ class AI
   end
 
   def available_moves(cells)
-    moves = []
-
-    for i in 0...cells.length
-      if cells[i] == " "
-        moves << i
-      end
-    end
-
-    moves
+    moves = cells.collect.with_index { |cell, i| i if cell == " " }
+    moves.compact
   end
 
   def over?(cells)
@@ -27,7 +20,7 @@ class AI
   end
 
   def full?(cells)
-    cells.none? {|cell| cell == " "}
+    cells.none? { |cell| cell == " " }
   end
 
   def won?(cells)
