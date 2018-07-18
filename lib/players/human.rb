@@ -1,9 +1,8 @@
 module Players
 
 class Human < Player
-  #Puny human
   def move
-    input = gets.strip
+    gets.strip
   end
 end
 

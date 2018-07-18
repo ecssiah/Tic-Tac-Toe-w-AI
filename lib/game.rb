@@ -37,9 +37,9 @@ class Game
     when "3"
       start_with_player_amount(0)
     when "4"
-      start_with_player_amount("wargames")
+      execute_wargames
     when "5"
-      start_with_player_amount("aiwars")
+      execute_aiwars
     end
   end
 
@@ -54,67 +54,81 @@ class Game
     when 2
       @player_1 = Players::Human.new("X")
       @player_2 = Players::Human.new("O")
-    when "wargames" 
-      times_tied = 0
-
-      100.times do
-        @player_1 = Players::Computer.new(self, "X")
-        @player_2 = Players::Computer.new(self, "O")
-
-        board.reset!
-        play
-
-        if draw?
-          times_tied += 1
-        end
-      end
-
-      puts "
-██╗    ██╗██╗███╗   ██╗███╗   ██╗███████╗██████╗    ███╗   ██╗ ██████╗ ███╗   ██╗███████╗
-██║    ██║██║████╗  ██║████╗  ██║██╔════╝██╔══██╗██╗████╗  ██║██╔═══██╗████╗  ██║██╔════╝
-██║ █╗ ██║██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝╚═╝██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗
-██║███╗██║██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗██╗██║╚██╗██║██║   ██║██║╚██╗██║██╔══╝
-╚███╔███╔╝██║██║ ╚████║██║ ╚████║███████╗██║  ██║╚═╝██║ ╚████║╚██████╔╝██║ ╚████║███████╗
- ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-      "
-      puts "I just played 100 games and won #{times_tied - 100}. A strange game.\nThe only winning move is not to play."
-      return
-    when "aiwars"
-      scores = [0, 0]
-
-      cd_player = Players::Computer.new(self, "X", "cd")
-      mm_player = Players::Computer.new(self, "O", "mm")
-
-      100.times do 
-        if rand(2).even?
-          @player_1 = cd_player
-          @player_2 = mm_player
-        else
-          @player_1 = mm_player
-          @player_2 = cd_player
-        end
-
-        board.reset!
-        play
-
-        if winner == "X"
-          scores[0] += 1
-        elsif winner == "O"
-          scores[1] += 1
-        end
-      end
-
-      puts
-      puts "  Coffee-Dust           Minimax   "
-      puts " =============       ============= "
-      puts " |     #{scores[0]}     |  to   |     #{scores[1]}     | "
-      puts " =============       ============= "
-      puts
-
-      return 
     end
 
     play
+  end
+
+  def execute_wargames
+    times_tied = 0
+
+    100.times do
+      @player_1 = Players::Computer.new(self, "X")
+      @player_2 = Players::Computer.new(self, "O")
+
+      board.reset!
+      play
+
+      if draw?
+        times_tied += 1
+      end
+    end
+
+    final_message = <<~STRING
+
+      ██╗    ██╗██╗███╗   ██╗███╗   ██╗███████╗██████╗    ███╗   ██╗ ██████╗ ███╗   ██╗███████╗
+      ██║    ██║██║████╗  ██║████╗  ██║██╔════╝██╔══██╗██╗████╗  ██║██╔═══██╗████╗  ██║██╔════╝
+      ██║ █╗ ██║██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝╚═╝██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗
+      ██║███╗██║██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗██╗██║╚██╗██║██║   ██║██║╚██╗██║██╔══╝
+      ╚███╔███╔╝██║██║ ╚████║██║ ╚████║███████╗██║  ██║╚═╝██║ ╚████║╚██████╔╝██║ ╚████║███████╗
+       ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+      I just played 100 games and won #{times_tied - 100}. A strange game.
+      The only winning move is not to play.
+    STRING
+
+    puts final_message
+  end
+
+  def execute_aiwars
+    games = 100
+    scores = [0, 0]
+
+    cd_player = Players::Computer.new(self, "X", "cd")
+    mm_player = Players::Computer.new(self, "O", "mm")
+
+    games.times do 
+      if rand(2).even?
+        @player_1 = cd_player
+        @player_2 = mm_player
+      else
+        @player_1 = mm_player
+        @player_2 = cd_player
+      end
+
+      board.reset!
+      play
+
+      if winner == "X"
+        scores[0] += 1
+      elsif winner == "O"
+        scores[1] += 1
+      end
+    end
+
+    ties = games - scores.reduce(:+)
+
+    final_message = <<~STRING
+      
+      #{games} were played.
+    
+      Coffee-Dust: #{scores[0]}  
+      Minimax: #{scores[1]}
+      Tie Games: #{ties}
+
+    STRING
+    
+    puts final_message
   end
 
   def play
