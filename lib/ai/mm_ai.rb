@@ -76,7 +76,7 @@ class AI
   end
 
   def calculate_move
-    if turn_count(@game.board.cells) == 0
+    if @game.board.turn_count == 0
       1 + rand(9)
     else 
       minimax(@game.board.cells)
