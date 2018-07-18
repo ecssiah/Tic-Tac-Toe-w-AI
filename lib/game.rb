@@ -82,21 +82,24 @@ class Game
     when "aiwars"
       scores = [0, 0]
 
+      cd_player = Players::Computer.new(self, "X", "cd")
+      mm_player = Players::Computer.new(self, "O", "mm")
+
       100.times do 
         if rand(2).even?
-          @player_1 = Players::Computer.new(self, "X", "cd")
-          @player_2 = Players::Computer.new(self, "O", "mm")
+          @player_1 = cd_player
+          @player_2 = mm_player
         else
-          @player_1 = Players::Computer.new(self, "O", "cd")
-          @player_2 = Players::Computer.new(self, "X", "mm")
+          @player_1 = mm_player
+          @player_2 = cd_player
         end
 
         board.reset!
         play
 
-        if winner == @player_1.token
+        if winner == "X"
           scores[0] += 1
-        elsif winner == @player_2.token
+        elsif winner == "O"
           scores[1] += 1
         end
       end
