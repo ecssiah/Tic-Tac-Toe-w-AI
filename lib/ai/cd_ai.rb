@@ -152,7 +152,7 @@ class AI
 
     best_move.flatten!
     best_move.uniq!
-    best_move.count > 1 ? best_move[rand(0...best_move.count - 1)] : best_move[0]
+    best_move.sample
   end
 
   def decide_first_move
