@@ -67,11 +67,9 @@ class AI
       moves << move
     end
 
-    if current_token(cells) == @token
-      index = scores.each.with_index.max[1]
-    else
-      index = scores.each.with_index.min[1]
-    end
+    score_enum = scores.each.with_index
+    is_player = current_token(cells) == @token
+    index = is_player ? score_enum.max[1] : score_enum.min[1]
 
     @input = moves[index] + 1
     scores[index]
