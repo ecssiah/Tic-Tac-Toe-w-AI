@@ -19,10 +19,10 @@ class Game
 
   def start
     greeting
-    game_mode
+    select_game_mode
   end
 
-  def game_mode
+  def select_game_mode
     print "Please select a game mode: "
 
     case gets.strip
