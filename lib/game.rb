@@ -140,7 +140,7 @@ class Game
   def play
     @board.reset!
 
-    turn while !over?
+    turn until over?
     @board.display
 
     if won?
