@@ -1,6 +1,6 @@
 module Players
 
-class Human < Player
+class Human < BasePlayer
   def move
     gets.strip
   end

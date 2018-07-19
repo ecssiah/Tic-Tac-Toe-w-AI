@@ -1,6 +1,6 @@
 module Players
 
-class Computer < Player
+class Computer < BasePlayer
   attr_reader :ai
 
   def initialize(game, token, ai_type=AI::CD::Identifier)

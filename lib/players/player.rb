@@ -1,4 +1,6 @@
-class Player
+module Players
+
+class BasePlayer
   attr_reader :token
 
   def initialize(token)
@@ -6,3 +8,4 @@ class Player
   end
 end
 
+end
