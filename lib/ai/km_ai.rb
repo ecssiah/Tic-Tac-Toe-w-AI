@@ -1,20 +1,11 @@
 module AI
 
-class KM
+class KM < BaseAI
   Name = "Karyme"
   Identifier = "km"
 
-  def initialize(game, token)
-    @game = game
-    @token = token
-  end
-
   def calculate_move
     opening || pursue_strategy || choose_randomly
-  end
-
-  def name
-    Name
   end
 
   private

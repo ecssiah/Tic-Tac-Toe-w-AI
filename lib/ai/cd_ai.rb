@@ -1,15 +1,10 @@
 module AI
 
-class CD
+class CD < BaseAI
   Name = "Coffee Dust"
   Identifier = "cd"
 
   attr_reader :move_status, :move
-
-  def initialize(game, token)
-    @game = game
-    @token = token
-  end
 
   def calculate_move
     @info = MoveInfo.new(@game, @token)

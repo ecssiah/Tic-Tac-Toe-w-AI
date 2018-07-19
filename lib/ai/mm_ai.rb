@@ -1,13 +1,8 @@
 module AI
 
-class MM
+class MM < BaseAI
   Name = "Minimax"
   Identifier = "mm"
-
-  def initialize(game, token)
-    @game = game
-    @token = token
-  end
 
   def calculate_move
     if @game.board.turn_count == 0
@@ -16,10 +11,6 @@ class MM
       minimax(@game.board.cells)
       @input
     end
-  end
-
-  def name
-    Name
   end
 
   private

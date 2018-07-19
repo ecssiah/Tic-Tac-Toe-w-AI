@@ -109,8 +109,8 @@ class Game
 
         #{games} games were played.
     
-        #{x_player.ai.name}: #{scores[0]}  
-        #{o_player.ai.name}: #{scores[1]}
+        #{x_player.ai.class::Name}: #{scores[0]}  
+        #{o_player.ai.class::Name}: #{scores[1]}
         Ties: #{ties}
 
       =-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -123,7 +123,7 @@ class Game
   def turn
     @board.display
 
-    print "Please enter 1-9: "
+    print "Choose position (1-9): "
     move = current_player.move
 
     if @board.valid_move?(move)
