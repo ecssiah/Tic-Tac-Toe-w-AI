@@ -6,11 +6,12 @@ class Computer < BasePlayer
   def initialize(game, token, ai_type=AI::CD::Identifier)
     super(token)
 
-    if ai_type == AI::CD::Identifier 
+    case ai_type 
+    when AI::CD::Identifier
       @ai = AI::CD.new(game, token)
-    elsif ai_type == AI::MM::Identifier 
+    when AI::MM::Identifier
       @ai = AI::MM.new(game, token)
-    elsif ai_type == AI::KM::Identifier 
+    when AI::KM::Identifier
       @ai = AI::KM.new(game, token)
     end
   end
