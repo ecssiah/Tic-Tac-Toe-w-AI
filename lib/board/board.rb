@@ -1,3 +1,5 @@
+module Board
+
 class Board
   include Query
 
@@ -33,3 +35,4 @@ class Board
   end
 end
 
+end

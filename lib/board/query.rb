@@ -1,3 +1,5 @@
+module Board
+
 module Query
   @@cells
 
@@ -50,4 +52,6 @@ module Query
   def over?(cells=@@cells)
     draw?(cells) || won?(cells)
   end
+end
+
 end

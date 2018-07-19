@@ -1,5 +1,5 @@
 class Game
-  include Query
+  include Board::Query
 
   attr_accessor :board, :player1, :player2
 
@@ -16,8 +16,8 @@ class Game
   ]
 
   def initialize
-    @board = Board.new
-    Query.cells = @board.cells
+    @board = Board::Board.new
+    Board::Query.cells = @board.cells
   end
 
   def start

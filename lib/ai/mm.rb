@@ -1,7 +1,7 @@
 module AI
 
 class MM < BaseAI
-  include ::Query
+  include Board::Query
 
   Name = "Minimax"
   Identifier = "mm"
