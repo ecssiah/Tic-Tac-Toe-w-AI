@@ -11,7 +11,7 @@ class MM < BaseAI
       1 + rand(9)
     else 
       minimax(@game.board.cells)
-      @input
+      @move
     end
   end
 
@@ -49,11 +49,12 @@ class MM < BaseAI
       moves << move
     end
 
-    score_enum = scores.each.with_index
     is_player = current_token(cells) == @token
+
+    score_enum = scores.each.with_index
     index = is_player ? score_enum.max[1] : score_enum.min[1]
 
-    @input = moves[index] + 1
+    @move = moves[index] + 1
     scores[index]
   end
 

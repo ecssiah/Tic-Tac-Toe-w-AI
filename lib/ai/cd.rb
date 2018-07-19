@@ -24,7 +24,7 @@ class CD < BaseAI
   private
 
   def decision_order
-    @info.first_move || @info.win || @info.cur_threat || find_best_move
+    @info.first_move || @info.win || @info.cur_threat || find_best_moves
   end
 
   def prioritize_threats(combo, possible_moves)
@@ -35,8 +35,8 @@ class CD < BaseAI
     end
   end 
 
-  def find_best_move
-    best_move = []
+  def find_best_moves
+    best_moves = []
     possible_moves = []
 
     Game::WIN_COMBINATIONS.each do |combo|
@@ -48,20 +48,20 @@ class CD < BaseAI
     end
 
     if corner_available(possible_moves)
-      best_move = possible_moves.flatten.select do |i| 
+      best_moves = possible_moves.flatten.select do |i| 
         Board::Corners.include?(i) 
       end
     else
-      best_move = possible_moves
+      best_moves = possible_moves
     end
 
     if possible_moves.empty?
-      best_move = @game.board.cells.select { |i| i == ' ' }
+      best_moves = @game.board.cells.select { |i| i == ' ' }
     end
 
-    best_move.flatten!
-    best_move.uniq!
-    best_move.sample
+    best_moves.flatten!
+    best_moves.uniq!
+    best_moves.sample
   end
 
   def corner_available(possible_moves)

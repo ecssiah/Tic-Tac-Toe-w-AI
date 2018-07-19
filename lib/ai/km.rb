@@ -71,7 +71,7 @@ class KM < BaseAI
       @game.board.cells[cell - 1] == " "
     end
 
-    possible_moves[rand(possible_moves.size)].to_s
+    possible_moves.sample.to_s
   end
 
 end
