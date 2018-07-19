@@ -141,7 +141,7 @@ class Game
     @board.reset!
 
     turn while !over?
-    board.display
+    @board.display
 
     if won?
       puts "Winner is #{winner}!"
