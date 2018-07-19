@@ -1,5 +1,7 @@
 module Board
 
+Corners = [0, 2, 6, 8]
+
 class Board
   include Query
 
