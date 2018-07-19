@@ -58,6 +58,18 @@ class Game
     play
   end
 
+  def execute_ai_wars
+    games = 100
+    scores = [0, 0]
+
+    x_player = Players::Computer.new(self, "X", select_ai("X"))
+    o_player = Players::Computer.new(self, "O", select_ai("O"))
+
+    games.times { |game| run_game(game, x_player, o_player, scores) }
+
+    conclusion(games, x_player, o_player, scores)
+  end
+
   def select_ai(token)
     puts
     AI_List.each { |name, identifier| puts "#{name}: #{identifier}" }
@@ -71,18 +83,6 @@ class Game
     end
 
     ai_type
-  end
-
-  def execute_ai_wars
-    games = 100
-    scores = [0, 0]
-
-    x_player = Players::Computer.new(self, "X", select_ai("X"))
-    o_player = Players::Computer.new(self, "O", select_ai("O"))
-
-    games.times { |game| run_game(game, x_player, o_player, scores) }
-
-    conclusion(games, x_player, o_player, scores)
   end
 
   def run_game(game, x_player, o_player, scores)
