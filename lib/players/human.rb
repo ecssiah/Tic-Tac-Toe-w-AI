@@ -6,4 +6,5 @@ class Human < Player
   end
 end
 
-end#endof module
+end
+

@@ -1,18 +1,16 @@
 class Game
-  attr_accessor :board, :player_1, :player_2
+  attr_accessor :board, :player1, :player2
+
+  AI_List = {
+    AI::MM::Name => AI::MM::Identifier,
+    AI::CD::Name => AI::CD::Identifier,
+    AI::KM::Name => AI::KM::Identifier
+  }
 
   WIN_COMBINATIONS = [
-    #horizontal
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    #vertical
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    #diagonal
-    [0,4,8],
-    [2,4,6]
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
   ]
 
   def initialize
@@ -20,131 +18,106 @@ class Game
   end
 
   def start
-    board.reset!
     greeting
     game_mode
   end
 
   def game_mode
-    print "Please input the gamemode you want by number (1-5): "
-    input = gets.strip
+    print "Please select a game mode: "
 
-    case input
+    case gets.strip
     when "1"
-      start_with_player_amount(1)
+      execute_game(1)
     when "2"
-      start_with_player_amount(2)
+      execute_game(2)
     when "3"
-      start_with_player_amount(0)
+      execute_game(0)
     when "4"
-      execute_wargames
-    when "5"
-      execute_aiwars
+      execute_ai_wars
+    else
+      execute_game(1)
     end
   end
 
-  def start_with_player_amount(amount)
-    case amount
+  def execute_game(num_players)
+    case num_players
     when 0
-      @player_1 = Players::Computer.new(self, "X")
-      @player_2 = Players::Computer.new(self, "O")
+      @player1 = Players::Computer.new(self, "X", select_ai("X"))
+      @player2 = Players::Computer.new(self, "O", select_ai("O"))
     when 1
-      @player_1 = Players::Human.new("X")
-      @player_2 = Players::Computer.new(self, "O")
+      @player1 = Players::Human.new("X")
+      @player2 = Players::Computer.new(self, "O", select_ai("O"))
     when 2
-      @player_1 = Players::Human.new("X")
-      @player_2 = Players::Human.new("O")
+      @player1 = Players::Human.new("X")
+      @player2 = Players::Human.new("O")
     end
 
     play
   end
 
-  def execute_wargames
-    times_tied = 0
+  def select_ai(token)
+    puts
+    AI_List.each { |name, identifier| puts "#{name}: #{identifier}" }
+    puts
 
-    100.times do
-      @player_1 = Players::Computer.new(self, "X")
-      @player_2 = Players::Computer.new(self, "O")
+    ai_type = nil
 
-      board.reset!
-      play
-
-      if draw?
-        times_tied += 1
-      end
+    until AI_List.has_value?(ai_type)
+      print "Choose the AI for #{token}: "
+      ai_type = gets.strip
     end
 
-    final_message = <<~STRING
-
-      ██╗    ██╗██╗███╗   ██╗███╗   ██╗███████╗██████╗    ███╗   ██╗ ██████╗ ███╗   ██╗███████╗
-      ██║    ██║██║████╗  ██║████╗  ██║██╔════╝██╔══██╗██╗████╗  ██║██╔═══██╗████╗  ██║██╔════╝
-      ██║ █╗ ██║██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝╚═╝██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗
-      ██║███╗██║██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗██╗██║╚██╗██║██║   ██║██║╚██╗██║██╔══╝
-      ╚███╔███╔╝██║██║ ╚████║██║ ╚████║███████╗██║  ██║╚═╝██║ ╚████║╚██████╔╝██║ ╚████║███████╗
-       ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
-      I just played 100 games and won #{times_tied - 100}. A strange game.
-      The only winning move is not to play.
-    STRING
-
-    puts final_message
+    ai_type
   end
 
-  def execute_aiwars
+  def execute_ai_wars
     games = 100
     scores = [0, 0]
 
-    cd_player = Players::Computer.new(self, "X", "cd")
-    mm_player = Players::Computer.new(self, "O", "mm")
+    x_player = Players::Computer.new(self, "X", select_ai("X"))
+    o_player = Players::Computer.new(self, "O", select_ai("O"))
 
-    games.times do 
-      if rand(2).even?
-        @player_1 = cd_player
-        @player_2 = mm_player
-      else
-        @player_1 = mm_player
-        @player_2 = cd_player
-      end
+    games.times { |game| run_game(game, x_player, o_player, scores) }
 
-      board.reset!
-      play
+    conclusion(games, x_player, o_player, scores)
+  end
 
-      if winner == "X"
-        scores[0] += 1
-      elsif winner == "O"
-        scores[1] += 1
-      end
+  def run_game(game, x_player, o_player, scores)
+    if game.even?
+      @player1 = x_player
+      @player2 = o_player
+    else
+      @player1 = o_player
+      @player2 = x_player
     end
 
+    play
+
+    if winner == "X"
+      scores[0] += 1
+    elsif winner == "O"
+      scores[1] += 1
+    end
+  end
+
+  def conclusion(games, x_player, o_player, scores)
     ties = games - scores.reduce(:+)
 
     final_message = <<~STRING
-      
-      #{games} were played.
+
+      =-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        #{games} games were played.
     
-      Coffee-Dust: #{scores[0]}  
-      Minimax: #{scores[1]}
-      Tie Games: #{ties}
+        #{x_player.ai.name}: #{scores[0]}  
+        #{o_player.ai.name}: #{scores[1]}
+        Ties: #{ties}
+
+      =-=-=-=-=-=-=-=-=-=-=-=-=-=
 
     STRING
     
     puts final_message
-  end
-
-  def play
-    turn while !over?
-    board.display
-
-    if won?
-      puts "Winner is #{winner}!"
-    elsif draw?
-      puts "Cat's game!"
-    end
-  end
-
-  def current_player
-    value = @board.turn_count
-    value.even? ? @player_1 : @player_2
   end
 
   def turn
@@ -154,7 +127,6 @@ class Game
     move = current_player.move
 
     if @board.valid_move?(move)
-      puts move
       @board.update(move, current_player)
     else
       puts("#{move} is an invalid position.")
@@ -162,33 +134,36 @@ class Game
     end
   end
 
-  def winner
-    won = won?
-    return nil if won == false
+  def play
+    board.reset!
 
-    if won.all? { |cell| @board.cells[cell] == "X" }
-      "X"
-    elsif won.all? { |cell| @board.cells[cell] == "O" }
-      "O"
+    turn while !over?
+    board.display
+
+    if won?
+      puts "Winner is #{winner}!"
+    elsif draw?
+      puts "Tie Game!"
     end
   end
 
+  def current_player
+    value = @board.turn_count
+    value.even? ? @player1 : @player2
+  end
+
+  def winner
+    win_combo = won?
+    win_combo ? @board.cells[win_combo[0]] : nil
+  end
+
   def won?
-    WIN_COMBINATIONS.each do |cell_group|
-      board_pos = [
-        @board.cells[cell_group[0]], 
-        @board.cells[cell_group[1]], 
-        @board.cells[cell_group[2]]
-      ]
+    cells = @board.cells
 
-      winning_group = 
-        board_pos.all? { |cell| cell == "X" } ||
-        board_pos.all? { |cell| cell == "O" }
-
-      return cell_group if winning_group
+    WIN_COMBINATIONS.find do |combo|
+      streak = cells[combo[0]] + cells[combo[1]] + cells[combo[2]]
+      streak == "XXX" || streak == "OOO"
     end
-
-    false
   end
 
   def draw?
@@ -199,39 +174,34 @@ class Game
     draw? || won?
   end
 
-  def pry
-    binding.pry
+  def greeting
+    message = <<~STRING
+      ╔═══════════════════════════════╗
+      ║ ╔╦╗╦╔═╗  ╔╦╗╔═╗╔═╗  ╔╦╗╔═╗╔═╗ ║
+      ║  ║ ║║     ║ ╠═╣║     ║ ║ ║║╣  ║ 
+      ║  ╩ ╩╚═╝   ╩ ╩ ╩╚═╝   ╩ ╚═╝╚═╝ ║
+      ╚═══════════════════════════════╝ 
+
+      ┌─┐┌─┐┬  ┌─┐┌─┐┌┬┐  ┌─┐┌─┐┌┬┐┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
+      └─┐├┤ │  ├┤ │   │   │ ┬├─┤│││├┤   ││││ │ ││├┤
+      └─┘└─┘┴─┘└─┘└─┘ ┴   └─┘┴ ┴┴ ┴└─┘  ┴ ┴└─┘─┴┘└─┘
+
+       ┬    ┌─┐┌┐┌┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐
+       │  - │ ││││├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘
+       ┴    └─┘┘└┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─
+      ┌─┐   ┌┬┐┬ ┬┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐
+      ┌─┘ -  │ ││││ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘
+      └─┘    ┴ └┴┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─
+      ┌─┐   ┌─┐┬  ┬  ┬  ┌─┐┬
+       ─┤ - ├─┤│  └┐┌┘  ├─┤│
+      └─┘   ┴ ┴┴   └┘   ┴ ┴┴
+      ┬ ┬   ┌─┐┬  ┬ ┬┌─┐┬─┐┌─┐
+      └─┤ - ├─┤│  │││├─┤├┬┘└─┐
+        ┴   ┴ ┴┴  └┴┘┴ ┴┴└─└─┘
+
+    STRING
+
+    puts message
   end
-
-end#endof class
-
-
-def greeting
-  puts '
-╔═╗╦  ╔═╗╦ ╦  ╔╦╗╦╔═╗  ╔╦╗╔═╗╔═╗  ╔╦╗╔═╗╔═╗
-╠═╝║  ╠═╣╚╦╝   ║ ║║     ║ ╠═╣║     ║ ║ ║║╣
-╩  ╩═╝╩ ╩ ╩    ╩ ╩╚═╝   ╩ ╩ ╩╚═╝   ╩ ╚═╝╚═╝
-  '
-  puts '
-┌─┐┌─┐┬  ┌─┐┌─┐┌┬┐  ┌─┐┌─┐┌┬┐┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
-└─┐├┤ │  ├┤ │   │   │ ┬├─┤│││├┤   ││││ │ ││├┤
-└─┘└─┘┴─┘└─┘└─┘ ┴   └─┘┴ ┴┴ ┴└─┘  ┴ ┴└─┘─┴┘└─┘
-  '
-  puts '
-     ┌─┐┌┐┌┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐
-───  │ ││││├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘
-     └─┘┘└┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─
-     ┌┬┐┬ ┬┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐
-───   │ ││││ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘
-      ┴ └┴┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─
-     ┌─┐┬  ┬  ┬  ┌─┐┬
-───  ├─┤│  └┐┌┘  ├─┤│
-     ┴ ┴┴   └┘   ┴ ┴┴
-     ┬ ┬┌─┐┬─┐┌─┐┌─┐┌┬┐┌─┐┌─┐
-───  │││├─┤├┬┘│ ┬├─┤│││├┤ └─┐
-     └┴┘┴ ┴┴└─└─┘┴ ┴┴ ┴└─┘└─┘
-     ┌─┐┬ ┬ ┬┌─┐┬─┐┌─┐
-───  ├─┤│ │││├─┤├┬┘└─┐
-     ┴ ┴┴ └┴┘┴ ┴┴└─└─┘
-  '
 end
+

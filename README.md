@@ -1,13 +1,8 @@
-# Tic-Tac-Toe-w-AI
+# Tic Tac Toe AI Wars
 
-Play Tic Tac Toe right in your command line interface.
+Command line tic tac toe game that pits different AI implementations against each other.
 
-You can:
-
-* Play against the AI
-* Play against another player
-* Have the computer play it self
-
-Type in wargames for a easter egg :)
-
-Now with AI Wars!
+Available AIs:
+* Minimax
+* Coffee Dust
+* Karyme

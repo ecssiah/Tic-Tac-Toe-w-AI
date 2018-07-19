@@ -1,19 +1,26 @@
 module Players
 
 class Computer < Player
-  def initialize(game, token, ai="cd")
+  attr_reader :ai
+
+  def initialize(game, token, ai_type=AI::CD::Identifier)
     super(token)
 
-    if ai == "cd"
-      @ai = CD_AI::AI.new(game, token)
-    elsif ai == "mm"
-      @ai = MM_AI::AI.new(game, token)
+    if ai_type == AI::CD::Identifier 
+      @ai = AI::CD.new(game, token)
+    elsif ai_type == AI::MM::Identifier 
+      @ai = AI::MM.new(game, token)
+    elsif ai_type == AI::KM::Identifier 
+      @ai = AI::KM.new(game, token)
     end
   end
 
   def move
-    @ai.calculate_move
+    move = @ai.calculate_move
+    puts move
+    move
   end
 end
 
-end#endof Module
+end
+

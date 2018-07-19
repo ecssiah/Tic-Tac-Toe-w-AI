@@ -1,10 +1,28 @@
-module MM_AI
+module AI
 
-class AI
+class MM
+  Name = "Minimax"
+  Identifier = "mm"
+
   def initialize(game, token)
     @game = game
     @token = token
   end
+
+  def calculate_move
+    if @game.board.turn_count == 0
+      1 + rand(9)
+    else 
+      minimax(@game.board.cells)
+      @input
+    end
+  end
+
+  def name
+    Name
+  end
+
+  private
 
   def available_moves(cells)
     moves = cells.collect.with_index { |cell, i| i if cell == " " }
@@ -16,7 +34,7 @@ class AI
   end
 
   def current_token(cells)
-    turn_count(cells).even? ? @game.player_1.token : @game.player_2.token 
+    turn_count(cells).even? ? @game.player1.token : @game.player2.token 
   end
 
   def full?(cells)
@@ -73,15 +91,6 @@ class AI
 
     @input = moves[index] + 1
     scores[index]
-  end
-
-  def calculate_move
-    if @game.board.turn_count == 0
-      1 + rand(9)
-    else 
-      minimax(@game.board.cells)
-      @input
-    end
   end
 
 end

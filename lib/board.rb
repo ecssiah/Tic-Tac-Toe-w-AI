@@ -5,28 +5,17 @@ class Board
     @cells = Array.new(9, " ")
   end
 
+  def update(input, player)
+    position = input.to_i - 1
+    self.cells[position] = player.token
+  end
+
   def reset!
     self.cells = Array.new(9, " ")
   end
 
-  def display
-    puts
-    puts " #{@cells[0]} | #{@cells[1]} | #{@cells[2]} "
-    puts "-----------"
-    puts " #{@cells[3]} | #{@cells[4]} | #{@cells[5]} "
-    puts "-----------"
-    puts " #{@cells[6]} | #{@cells[7]} | #{@cells[8]} "
-    puts
-  end
-
   def position(input)
     self.cells[input.to_i - 1]
-  end
-
-  def update(input, player)
-    position = input.to_i - 1
-
-    self.cells[position] = player.token
   end
 
   def valid_move?(input)
@@ -35,7 +24,6 @@ class Board
   end
 
   def taken?(input)
-    # Featuring Liam Neeson. Sorry i had too
     self.position(input) == "X" || self.position(input) == "O"
   end
 
@@ -44,10 +32,21 @@ class Board
   end
 
   def turn_count
-    cells = @cells.select { |cell|
-      cell == "X" || cell == "O"
-    }
-    cells.count
+    @cells.count { |cell| cell != " " }
   end
 
-end#endof class
+  def display
+    board_display = <<~STRING
+
+       #{@cells[0]} | #{@cells[1]} | #{@cells[2]}
+      -----------
+       #{@cells[3]} | #{@cells[4]} | #{@cells[5]}
+      -----------
+       #{@cells[6]} | #{@cells[7]} | #{@cells[8]}
+ 
+    STRING
+
+    puts board_display
+  end
+end
+
