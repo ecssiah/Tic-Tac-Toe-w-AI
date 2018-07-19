@@ -1,4 +1,6 @@
 class Game
+  include Query
+
   attr_accessor :board, :player1, :player2
 
   AI_List = {
@@ -15,6 +17,7 @@ class Game
 
   def initialize
     @board = Board.new
+    Query.cells = @board.cells
   end
 
   def start
@@ -126,7 +129,7 @@ class Game
     print "Choose position (1-9): "
     move = current_player.move
 
-    if @board.valid_move?(move)
+    if valid_move?(move)
       @board.update(move, current_player)
     else
       puts("#{move} is an invalid position.")
@@ -135,7 +138,7 @@ class Game
   end
 
   def play
-    board.reset!
+    @board.reset!
 
     turn while !over?
     board.display
@@ -148,30 +151,7 @@ class Game
   end
 
   def current_player
-    value = @board.turn_count
-    value.even? ? @player1 : @player2
-  end
-
-  def winner
-    win_combo = won?
-    win_combo ? @board.cells[win_combo[0]] : nil
-  end
-
-  def won?
-    cells = @board.cells
-
-    WIN_COMBINATIONS.find do |combo|
-      streak = cells[combo[0]] + cells[combo[1]] + cells[combo[2]]
-      streak == "XXX" || streak == "OOO"
-    end
-  end
-
-  def draw?
-    !won? && @board.full?
-  end
-
-  def over?
-    draw? || won?
+    turn_count.even? ? @player1 : @player2
   end
 
   def greeting

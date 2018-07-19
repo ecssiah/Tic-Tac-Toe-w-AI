@@ -1,6 +1,8 @@
 module AI
 
 class MM < BaseAI
+  include ::Query
+
   Name = "Minimax"
   Identifier = "mm"
 
@@ -15,37 +17,8 @@ class MM < BaseAI
 
   private
 
-  def available_moves(cells)
-    moves = cells.collect.with_index { |cell, i| i if cell == " " }
-    moves.compact
-  end
-
-  def over?(cells)
-    full?(cells) || won?(cells)
-  end
-
   def current_token(cells)
     turn_count(cells).even? ? @game.player1.token : @game.player2.token 
-  end
-
-  def full?(cells)
-    cells.none? { |cell| cell == " " }
-  end
-
-  def won?(cells)
-    Game::WIN_COMBINATIONS.find do |combo|
-      streak = cells[combo[0]] + cells[combo[1]] + cells[combo[2]]
-      streak == "XXX" || streak == "OOO"
-    end
-  end
-
-  def winner(cells)
-    win_combo = won?(cells)
-    win_combo ? cells[win_combo[0]] : nil
-  end
-
-  def turn_count(cells)
-    cells.count { |cell| cell != " " }
   end
 
   def generate_state(move, cells)
