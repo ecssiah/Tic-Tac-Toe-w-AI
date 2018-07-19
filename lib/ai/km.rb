@@ -24,71 +24,46 @@ class KM < BaseAI
       end
     end
 
-    false
-  end
-
-  def take_win
-    Game::WIN_COMBINATIONS.each do |combo|
-      combo_state = [
-        @game.board.cells[combo[0]], 
-        @game.board.cells[combo[1]], 
-        @game.board.cells[combo[2]]
-      ]
-
-      blanks = combo_state.find_all { |cell| cell == " " }
-      tokens = combo_state.find_all { |cell| cell == @token }
-
-      if tokens.size == 2 && blanks.size == 1
-        choice = combo[combo_state.find_index(" ")] + 1
-        return choice.to_s
-      end
-    end
-
-    false
-  end
-
-  def block_opposing
-    Game::WIN_COMBINATIONS.each do |combo|
-      combo_state = [
-        @game.board.cells[combo[0]], 
-        @game.board.cells[combo[1]], 
-        @game.board.cells[combo[2]]
-      ]
-
-      blanks = combo_state.find_all { |cell| cell == " " }
-      tokens = combo_state.find_all { |cell| cell == @token }
-
-      if tokens.size == 0 && blanks.size == 1
-        choice = combo[combo_state.find_index(" ")] + 1
-        return choice.to_s
-      end
-    end
-
-    false
-  end
-
-  def further_agenda
-    Game::WIN_COMBINATIONS.each do |combo|
-      combo_state = [
-        @game.board.cells[combo[0]], 
-        @game.board.cells[combo[1]], 
-        @game.board.cells[combo[2]]
-      ]
-
-      blanks = combo_state.find_all { |cell| cell == " " }
-      tokens = combo_state.find_all { |cell| cell == @token }
-
-      if tokens.size == 1 && blanks.size >= 1
-        choice = combo[combo_state.find_index(" ")] + 1
-        return choice.to_s
-      end
-    end
-
-    false
+    nil
   end
 
   def pursue_strategy
     take_win || block_opposing || further_agenda
+  end
+
+  def take_win
+    scan_board(2, 1, :==)
+  end
+
+  def block_opposing
+    scan_board(0, 1, :==)
+  end
+
+  def further_agenda
+    scan_board(1, 1, :>=)
+  end
+
+  def scan_board(token_target, blank_target, blank_operator)
+    Game::WIN_COMBINATIONS.each do |combo|
+      combo_state = [
+        @game.board.cells[combo[0]], 
+        @game.board.cells[combo[1]], 
+        @game.board.cells[combo[2]]
+      ]
+
+      blanks = combo_state.find_all { |cell| cell == " " }
+      tokens = combo_state.find_all { |cell| cell == @token }
+
+      token_criteria = tokens.size == token_target  
+      blank_criteria = blanks.size.send(blank_operator, blank_target) 
+
+      if token_criteria && blank_criteria 
+        choice = combo[combo_state.find_index(" ")] + 1
+        return choice.to_s
+      end
+    end
+
+    nil
   end
 
   def choose_randomly
@@ -96,7 +71,7 @@ class KM < BaseAI
       @game.board.cells[cell - 1] == " "
     end
 
-    possible_moves[Random.rand(possible_moves.size)].to_s
+    possible_moves[rand(possible_moves.size)].to_s
   end
 
 end
