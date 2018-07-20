@@ -11,6 +11,7 @@ require 'ai/base_ai'
 require 'ai/cd'
 require 'ai/km'
 require 'ai/mm'
+require 'ai/ms'
 
 require 'players/player'
 require 'players/computer'

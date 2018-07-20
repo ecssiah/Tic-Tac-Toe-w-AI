@@ -6,7 +6,8 @@ class Game
   AI_List = {
     AI::MM::Name => AI::MM::Identifier,
     AI::CD::Name => AI::CD::Identifier,
-    AI::KM::Name => AI::KM::Identifier
+    AI::KM::Name => AI::KM::Identifier,
+    AI::MS::Name => AI::MS::Identifier
   }
 
   WIN_COMBINATIONS = [

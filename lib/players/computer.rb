@@ -13,6 +13,8 @@ class Computer < BasePlayer
       @ai = AI::MM.new(game, token)
     when AI::KM::Identifier
       @ai = AI::KM.new(game, token)
+    when AI::MS::Identifier
+      @ai = AI::MS.new(game, token)
     end
   end
 

@@ -8,7 +8,7 @@ class MM < BaseAI
 
   def calculate_move
     if @game.board.turn_count == 0
-      Board::Corners.sample
+      1 + rand(9)
     else 
       minimax(@game.board.cells)
       @move
