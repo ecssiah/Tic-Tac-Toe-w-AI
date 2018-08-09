@@ -1,5 +1,7 @@
 # Tic Tac Toe AI Wars
+
 Available AIs:
-* Minimax
-* Coffee Dust
-* Karyme
+* mm - Minimax
+* cd - Coffee Dust
+* km - Karyme
+* ms - Micah Schute
